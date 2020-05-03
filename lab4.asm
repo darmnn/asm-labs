@@ -17,7 +17,7 @@ killed_message db "the ship is killed"
 coords_message db "enter coordinates:"
 myMove_message db "it's your move!"
 AIMove_message db "it's computer's move!"
-gameOver_message db "GAME OVER"
+gameOver_message db "GAME OVER", '$'
 youWon_message db "you won!"
 AIWon_message db "computer won!"
 killedFlag db ?
@@ -25,8 +25,8 @@ killedFlag db ?
 .code 
 .386
 start:  mov ax, @data 
-	mov es, ax 
 	mov ds, ax
+	mov es, ax
 
 	mov ax, 0003h
         int 10h
@@ -87,14 +87,11 @@ AIWon:
 	jmp exit
 
 exit:
-	mov bp, offset gameOver_message
-	mov cx, 9
-	mov ah, 13h
-	mov al, 0
-	mov bl, 00011111b
-	mov dh, 6
-	mov dl, 20
-	int 10h
+	mov ax, 0b800H 
+	mov es, ax
+	lea dx, gameOver_message
+	mov ah, 09h
+	int 21h
 
 	call sleep
 
