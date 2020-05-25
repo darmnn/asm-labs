@@ -82,8 +82,7 @@ start:	mov ax, es
 	lea bx, blockEPB 
 	int 21h 
 	jc runProgError
-
-exit:	
+	
 	lea dx, end_msg
 	call output
 	inc num
@@ -91,7 +90,7 @@ exit:
 	lea dx, [di+1]
 	call output
 	call new_line
-
+exit:
 	mov ax, 4C00h 
 	int 21h
 
@@ -120,31 +119,37 @@ getNewCMD proc
 l1:
 	mov al, [si]
 	cmp al, 0
-	je aaa1
+	je decNumber
 	inc si
 	jmp l1
 
-aaa1:
+decNumber:
 	dec si	
 	mov al, [si]
+	cmp al, '0'
+	je prevSym
+back:
 	sub al, 1
 	mov [si], al
+	jmp exitGetNewCMD
 
-	;call numberToString
-	
-	;lea si, cmd_text
-;rewrite:
-	;mov al, [di+1]
-	;cmp al, '$'
-	;je endWrite
+prevSym:
+	mov al, '9'
+	mov [si], al
+	dec si
+	mov al, [si]
+	cmp al, '1'
+	je nine
+	jmp back
 
-	;mov [si], al
-	;inc si
-	;inc di
-	;jmp rewrite
+nine:
+	mov al, '9'
+	mov [si], al
+	inc si
+	mov al, 0
+	mov [si], al
 
-;endWrite:	
-
+exitGetNewCMD:
 	pop si
 	pop ax
 	ret
